@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import EventCreate from './views/EventCreate.vue'
 import EventList from './views/EventList.vue'
 import EventShow from './views/EventShow.vue'
+import Product from './views/Product.vue'
 import NProgress from 'nprogress'
 import store from '@/store/store'
 import NotFound from './views/NotFound.vue'
@@ -18,6 +19,11 @@ const router = new Router({
       name: 'event-list',
       component: EventList,
       props: true
+    },
+    {
+      path: '/product',
+      name: 'product',
+      component: Product
     },
     {
       path: '/event/create',
