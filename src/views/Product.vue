@@ -64,15 +64,40 @@
 
             <p>Forward Facing</p>
             <p>Standing Pose</p>
-            <uploader
+            <input
+              type="file"
+              ref="src"
+              style="display: none"
+              v-on:change="srcImage($event)"
+            />
+            <button @click="$refs.src.click()">src</button>
+            <input
+              type="file"
+              ref="tgt"
+              style="display: none"
+              v-on:change="tgtImage($event)"
+            />
+            <button @click="$refs.tgt.click()">tgt</button>
+            <button @click="upload()">Upload</button>
+            <!-- <uploader
+              ref="uploader"
+              :autoStart="false"
+              @file-progress="onFileProgress"
+              @file-added="onFileAdded"
               :options="options"
               class="uploader-example"
-              style="margin-top: 1.5rem;"
             >
               <uploader-unsupport></uploader-unsupport>
-              <uploader-btn :attrs="attrs">UPLOAD FROM DEVICE</uploader-btn>
-              <uploader-list></uploader-list>
-            </uploader>
+              <uploader-drop>
+                <p>UPLOAD FROM DEVICE</p>
+                <uploader-btn @click="srcImage($event)" :attrs="attrs"
+                  >src images</uploader-btn
+                >
+                <uploader-btn @click="tgtImage($event)" :attrs="attrs"
+                  >tgt images</uploader-btn
+                >
+              </uploader-drop>
+            </uploader> -->
           </div>
         </div>
       </b-modal>
@@ -84,7 +109,75 @@
 export default {
   data() {
     return {
-      isImageModalActive: false
+      srcFile: '',
+      tgtFile: '',
+      isImageModalActive: false,
+      options: {
+        // https://github.com/simple-uploader/Uploader/tree/develop/samples/Node.js
+        target: 'https://api-pod7.colab.proneer.co/api/swap/upload_src',
+        testChunks: false
+      },
+      attrs: {
+        accept: 'image/*'
+      }
+    }
+  },
+  methods: {
+    upload() {
+      fetch('https://api-pod7.colab.proneer.co/api/swap/upload_src', {
+        method: 'POST',
+        body: this.srcFile
+      }).then(response => {
+        console.log(response)
+        fetch('https://api-pod7.colab.proneer.co/api/swap/upload_tgt', {
+          method: 'POST',
+          body: this.tgtFile
+        }).then(response => {
+          console.log(response)
+          fetch('https://api-pod7.colab.proneer.co/api/swap', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error))
+        })
+      })
+    },
+    onFileProgress(rootFile, file, chunk) {
+      console.log(
+        `上传中 ${file.name}，chunk：${chunk.startByte /
+          1024 /
+          1024} ~ ${chunk.endByte / 1024 / 1024}`
+      )
+    },
+    // onFileAdded(event) {
+    //   var file = event.file
+    //   var reader = new FileReader()
+    //   reader.onloadend = function() {
+    //     // console.log('Encoded Base 64 File String:', reader.result)
+    //     /******************* for Binary ***********************/
+    //     // var data = reader.result.split(',')[1]
+    //     // var binaryBlob = atob(data)
+    //     // console.log('Encoded Binary File String:', binaryBlob)
+    //   }
+    //   reader.readAsDataURL(file)
+
+    //   // this.$store
+    //   //   .dispatch('event/createEvent', this.event)
+    //   //   .then(() => {
+    //   //     this.$router.push({
+    //   //       name: 'event-show',
+    //   //       params: { id: this.event.id }
+    //   //     })
+    //   //     this.event = this.createFreshEventObject()
+    //   //   })
+    //   //   .catch((error) => {
+    //   //     console.error(error);
+    //   //   })
+    // },
+    tgtImage(event) {
+      this.tgtFile = event.srcElement.files[0]
+    },
+    srcImage(event) {
+      this.srcFile = event.srcElement.files[0]
     }
   }
 }
