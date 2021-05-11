@@ -14,7 +14,7 @@
 		"@fortawesome/vue-fontawesome": "^0.1.10",
 		"axios": "^0.18.1",
 		"buefy": "^0.8.20",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.21",
 		"node-sass": "^4.14.1",
 		"nprogress": "^0.2.0",
 		"sass-loader": "^8.0.2",
